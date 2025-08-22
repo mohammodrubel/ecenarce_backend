@@ -1,19 +1,19 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
-  - The values [AUTHOR] on the enum `UserRole` will be removed. If these variants are still used in the database, this will fail.
+-- CreateTable
+CREATE TABLE "users" (
+    "id" TEXT NOT NULL,
+    "full_name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" "UserRole" NOT NULL DEFAULT 'USER',
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
-*/
--- AlterEnum
-BEGIN;
-CREATE TYPE "UserRole_new" AS ENUM ('ADMIN', 'USER');
-ALTER TABLE "users" ALTER COLUMN "role" DROP DEFAULT;
-ALTER TABLE "users" ALTER COLUMN "role" TYPE "UserRole_new" USING ("role"::text::"UserRole_new");
-ALTER TYPE "UserRole" RENAME TO "UserRole_old";
-ALTER TYPE "UserRole_new" RENAME TO "UserRole";
-DROP TYPE "UserRole_old";
-ALTER TABLE "users" ALTER COLUMN "role" SET DEFAULT 'USER';
-COMMIT;
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "brands" (
@@ -31,6 +31,7 @@ CREATE TABLE "categories" (
     "name" TEXT NOT NULL,
     "icon" TEXT,
     "subcategories" TEXT[],
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -59,6 +60,9 @@ CREATE TABLE "products" (
 
     CONSTRAINT "products_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "brands_name_key" ON "brands"("name");

@@ -40,10 +40,11 @@ model Brand {
 // Category model
 model Category {
   id           String    @id @default(uuid())
-  name         String
+  name         String 
   icon         String?
   subcategories String[]
   products     Product[]
+  isDeleted Boolean @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
