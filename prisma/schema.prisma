@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model (as you already have)
+model User {
+  id         String   @id @default(uuid())
+  full_name  String
+  email      String   @unique
+  password   String
+  role       UserRole @default(USER)
+  is_deleted Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// Brand model
+model Brand {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("brands")
+}
+
+// Category model
+model Category {
+  id           String    @id @default(uuid())
+  name         String
+  icon         String?
+  subcategories String[]
+  products     Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("categories")
+}
+
+// Product model
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  subcategory   String
+  price         Float
+  originalPrice Float
+  stock         Int
+  sku           String   @unique
+  brandId       String
+  categoryId    String
+  images        Json
+  rating        Float?
+  reviewsCount  Int?     @default(0)
+  badge         String?
+  inStock       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  brand    Brand    @relation(fields: [brandId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
