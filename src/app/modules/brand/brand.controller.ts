@@ -1,24 +1,69 @@
-// import catchAsync from '../../utils/catchAsync';
+import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { brandService } from './brand.service';
 
-// // Create Category
-// const createCategory = catchAsync(async (req, res) => {});
+const createBrand = catchAsync(async (req, res) => {
+  const result = await brandService.createBrand(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: 'Brand created successfully',
+    data: result,
+  });
+});
 
-// // Get All Categories
-// const getCategories = catchAsync(async (req, res) => {});
 
-// // Get Single Category by ID
-// const getCategory = catchAsync(async (req, res) => {});
+const getAllBrand = catchAsync(async (req, res) => {
+  const result = await brandService.getAllBrand();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Brands fetched successfully',
+    data: result,
+  });
+});
 
-// // Update Category by ID
-// const updateCategory = catchAsync(async (req, res) => {});
 
-// // Delete Category by ID
-// const deleteCategory = catchAsync(async (req, res) => {});
+const getBrand = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await brandService.getBrand(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Brand fetched successfully',
+    data: result,
+  });
+});
 
-// export const CategoryController = {
-//   createCategory,
-//   getCategories,
-//   getCategory,
-//   updateCategory,
-//   deleteCategory,
-// };
+
+const updateBrand = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await brandService.updateBrand(id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Brand updated successfully',
+    data: result,
+  });
+});
+
+
+const deleteBrand = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await brandService.deleteBrand(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Brand deleted successfully',
+    data: result,
+  });
+});
+
+export const BrandController = {
+  createBrand,
+  getAllBrand,
+  getBrand,
+  updateBrand,
+  deleteBrand,
+};

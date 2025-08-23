@@ -28,25 +28,26 @@ enum UserRole {
 
 // Brand model
 model Brand {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Product     Product[]
 
   @@map("brands")
 }
 
 // Category model
 model Category {
-  id           String    @id @default(uuid())
-  name         String 
-  icon         String?
+  id            String    @id @default(uuid())
+  name          String
+  icon          String?
   subcategories String[]
-  products     Product[]
-  isDeleted Boolean @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  products      Product[]
+  isDeleted     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@map("categories")
 }
@@ -63,7 +64,7 @@ model Product {
   sku           String   @unique
   brandId       String
   categoryId    String
-  images        Json
+  images        String[]
   rating        Float?
   reviewsCount  Int?     @default(0)
   badge         String?

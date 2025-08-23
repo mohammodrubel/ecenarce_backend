@@ -1,17 +1,17 @@
-import router from '../../routes';
-import { CategoryController } from './category.controller';
+import { Router } from 'express';
+import { BrandController } from './brand.controller';
 
-// Create a new category
+const router = Router();
+
 router
   .route('/')
-  .post(CategoryController.createCategory)
-  .get(CategoryController.getCategories); // Get all categories
+  .post(BrandController.createBrand)
+  .get(BrandController.getAllBrand);
 
-// Get, Update, Delete a single category by ID
 router
   .route('/:id')
-  .get(CategoryController.getCategory)
-  .put(CategoryController.updateCategory) // Update category
-  .delete(CategoryController.deleteCategory); // Delete category
+  .get(BrandController.getBrand)
+  .put(BrandController.updateBrand)
+  .delete(BrandController.deleteBrand);
 
-export const categoryRouter = router;
+export const brandRouter = router;

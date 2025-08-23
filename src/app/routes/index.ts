@@ -2,12 +2,14 @@ import express from 'express';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 import { userRouter } from '../modules/user/user.router';
 import { categoryRouter } from '../modules/category/category.route';
+import { brandRouter } from '../modules/brand/brand.routes';
+import { productRouter } from '../modules/product/product.router';
 
 const router = express.Router();
 
 type Route = {
-    path: string;
-    route: express.Router;
+  path: string;
+  route: express.Router;
 };
 
 const routes: Route[] = [
@@ -23,10 +25,18 @@ const routes: Route[] = [
     path: '/category',
     route: categoryRouter,
   },
+  {
+    path: '/brand',
+    route: brandRouter,
+  },
+  {
+    path: '/products',
+    route: productRouter,
+  },
 ];
 
 routes.forEach((route) => {
-    router.use(route.path, route.route);
+  router.use(route.path, route.route);
 });
 
 export default router;
