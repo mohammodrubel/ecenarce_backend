@@ -1,9 +1,9 @@
 // productService.ts
 
-import httpStatus from "http-status";
-import AppError from "../../errors/AppError";
-import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
-import prisma from "../../utils/prisma";
+import httpStatus from 'http-status';
+import AppError from '../../errors/AppError';
+import prisma from '../../utils/prisma';
+import { sendImageCloudinary } from '../../utils/sendImageToCloudinary';
 
 // Dummy async functions for CRUD operations
 
@@ -24,7 +24,10 @@ export const createProduct = async (
   for (const file of files) {
     const imageName =
       new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
-    const uploadResult: any = await sendImageToCloudinary(file, imageName);
+
+    // ✅ send buffer, not file object
+    const uploadResult: any = await sendImageCloudinary(file.buffer, imageName);
+
     imageUrls.push(uploadResult.secure_url);
   }
 
@@ -32,20 +35,26 @@ export const createProduct = async (
   const result = await prisma.product.create({
     data: {
       ...data,
-      images: imageUrls, 
+      images: imageUrls,
     },
   });
 
   return result;
 };
+
 const getProduct = async (id: string) => {
   // Fetch product by id from database
   return { message: 'Product fetched', id };
 };
 
 const getAllProducts = async () => {
-  // Fetch all products from database
-  return { message: 'All products fetched' };
+  const result = await prisma.product.findMany({
+    include: {
+      category: true,
+      brand: true,
+    },
+  });
+  return result;
 };
 
 const updateProduct = async (id: string, data: any) => {

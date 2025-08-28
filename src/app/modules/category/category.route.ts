@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { upload } from '../../utils/handelFile';
 import { CategoryController } from './category.controller';
+import { upload } from '../../utils/sendImageToCloudinary';
 const router = Router();
 router
   .route('/')

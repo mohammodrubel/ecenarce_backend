@@ -1,4 +1,4 @@
-type TRole = 'ADMIN' | 'INSTRUCTOR' | 'CANDIDATE';
+type TRole = 'ADMIN' | 'USER' ;
 
 export interface ILogin {
   email: string;

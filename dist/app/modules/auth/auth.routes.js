@@ -13,5 +13,5 @@ const client_1 = require("@prisma/client");
 const router = express_1.default.Router();
 router.post('/login', (0, validateRequest_1.default)(auth_validation_1.default.LoginSchema), auth_controller_1.default.Login);
 router.post('/register', (0, validateRequest_1.default)(auth_validation_1.default.RegisterSchema), auth_controller_1.default.Register);
-router.patch('/change-password', (0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.AUTHOR, client_1.UserRole.CANDIDATE), (0, validateRequest_1.default)(auth_validation_1.default.ChangePasswordSchema), auth_controller_1.default.ChangePassword);
+router.patch('/change-password', (0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.USER), (0, validateRequest_1.default)(auth_validation_1.default.ChangePasswordSchema), auth_controller_1.default.ChangePassword);
 exports.AuthRoutes = router;

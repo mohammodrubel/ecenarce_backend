@@ -1,11 +1,20 @@
 import { Router } from 'express';
 import { BrandController } from './brand.controller';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { upload } from '../../utils/sendImageToCloudinary';
 
 const router = Router();
 
 router
   .route('/')
-  .post(BrandController.createBrand)
+  .post(
+    upload.single('file'),
+    (req: Request, res: Response, next: NextFunction) => {
+      req.body = JSON.parse(req.body.data);
+      next();
+    },
+    BrandController.createBrand,
+  )
   .get(BrandController.getAllBrand);
 
 router

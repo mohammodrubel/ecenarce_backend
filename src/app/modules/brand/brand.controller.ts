@@ -2,14 +2,21 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { brandService } from './brand.service';
+import AppError from '../../errors/AppError';
 
 const createBrand = catchAsync(async (req, res) => {
-  const result = await brandService.createBrand(req.body);
+  const file = req.file;
+  if (!file) {
+    throw new AppError(httpStatus.CONFLICT, 'Brand image is required');
+  }
+
+ const reuslt = await brandService.createBrand(file,req.body)
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
     message: 'Brand created successfully',
-    data: result,
+    data: reuslt,
   });
 });
 

@@ -29,6 +29,7 @@ enum UserRole {
 // Brand model
 model Brand {
   id          String    @id @default(uuid())
+  logo String?
   name        String    @unique
   description String
   createdAt   DateTime  @default(now())

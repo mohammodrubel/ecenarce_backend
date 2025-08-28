@@ -2,15 +2,30 @@ import { Brand } from "@prisma/client";
 import prisma from "../../utils/prisma";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
+import { sendImageCloudinary } from "../../utils/sendImageToCloudinary";
 
-// Create Category
-const createBrand = async (data:Brand) => {
+const createBrand = async (
+  file: Express.Multer.File,
+  data: { name: string; description: string }, // description is required
+) => {
+  if (!file) throw new AppError(httpStatus.CONFLICT, 'Image is required');
+
+  const imageName =
+    new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
+
+  const uploadResult: any = await sendImageCloudinary(file.buffer, imageName);
+
+  // Prisma expects description to be a string (required)
   const result = await prisma.brand.create({
-    data: data,
+    data: {
+      name: data.name,
+      description: data.description, // ✅ must be present
+      logo: uploadResult.secure_url,
+    },
   });
-  return result 
-};
 
+  return result;
+};
 // Get All Categories
 const getAllBrand = async () => {
   const reuslt = await prisma.brand.findMany({})

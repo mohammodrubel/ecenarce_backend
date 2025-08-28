@@ -1,46 +1,39 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.upload = exports.sendImageToCloudinary = void 0;
+exports.upload = exports.sendImageCloudinary = void 0;
 const cloudinary_1 = require("cloudinary");
 const multer_1 = __importDefault(require("multer"));
-const fs_1 = __importDefault(require("fs"));
+// Cloudinary config
 cloudinary_1.v2.config({
-    cloud_name: 'dcijrliws',
-    api_key: '381723299955348',
-    api_secret: 'UpYvwvLZH2xthek7Me9-Xuh7Jqk'
+    cloud_name: 'de2ysphks',
+    api_key: '426748166613985',
+    api_secret: '7gqc9Xwit13V0MP58NqqOqRLKNs',
 });
-const sendImageToCloudinary = (path, imageName) => {
+// Upload buffer directly to Cloudinary
+const sendImageCloudinary = (buffer, publicId) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        cloudinary_1.v2.uploader.upload(path, {
-            public_id: imageName
-        }, function (error, result) {
-            if (error) {
-                reject(error);
-            }
-            resolve(result);
-            fs_1.default.unlink(path, (error) => {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    console.log('file is deleted');
-                }
-            });
+        const stream = cloudinary_1.v2.uploader.upload_stream({ public_id: publicId || new Date().toISOString() }, (error, result) => {
+            if (error)
+                return reject(error);
+            if (result)
+                return resolve(result);
         });
+        stream.end(buffer); // send buffer to Cloudinary
     });
-};
-exports.sendImageToCloudinary = sendImageToCloudinary;
-// multer 
-const storage = multer_1.default.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, process.cwd() + '/uploads');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix);
-    }
 });
-exports.upload = (0, multer_1.default)({ storage: storage });
+exports.sendImageCloudinary = sendImageCloudinary;
+// Multer config (memory storage → keeps files in RAM, no disk writes)
+const storage = multer_1.default.memoryStorage();
+exports.upload = (0, multer_1.default)({ storage });

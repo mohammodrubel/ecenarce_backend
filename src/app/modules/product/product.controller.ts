@@ -8,7 +8,6 @@ const createProduct = catchAsync(async (req, res) => {
   const files = req.files as Express.Multer.File[] | undefined;
   const result = await ProductService.createProduct(req.body, files);
 
-  
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,

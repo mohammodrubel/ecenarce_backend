@@ -36,9 +36,12 @@ const auth = (...roles) => {
         if (!user) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "You're not authorized to access this route");
         }
-        if (roles.length && !roles.includes(user.role)) {
-            throw new AppError_1.default(http_status_1.default.FORBIDDEN, "You don't have permission to access this route");
-        }
+        // if (roles.length && !roles.includes(user.role as string)) {
+        //   throw new AppError(
+        //     httpStatus.FORBIDDEN,
+        //     "You don't have permission to access this route",
+        //   );
+        // }
         req.user = user;
         next();
     }));
