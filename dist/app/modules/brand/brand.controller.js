@@ -17,14 +17,18 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const brand_service_1 = require("./brand.service");
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const createBrand = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const file = req.file;
-    const result = yield brand_service_1.brandService.createBrand(file, req.body);
+    if (!file) {
+        throw new AppError_1.default(http_status_1.default.CONFLICT, 'Brand image is required');
+    }
+    const reuslt = yield brand_service_1.brandService.createBrand(file, req.body);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.CREATED,
         message: 'Brand created successfully',
-        data: result,
+        data: reuslt,
     });
 }));
 const getAllBrand = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {

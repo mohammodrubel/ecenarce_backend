@@ -17,17 +17,18 @@ const prisma_1 = __importDefault(require("../../utils/prisma"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const http_status_1 = __importDefault(require("http-status"));
 const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
-// Create Category
 const createBrand = (file, data) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!file) {
+    if (!file)
         throw new AppError_1.default(http_status_1.default.CONFLICT, 'Image is required');
-    }
     const imageName = new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
-    // Upload image to Cloudinary
     const uploadResult = yield (0, sendImageToCloudinary_1.sendImageCloudinary)(file.buffer, imageName);
-    // Save brand with single image URL
+    // Prisma expects description to be a string (required)
     const result = yield prisma_1.default.brand.create({
-        data: Object.assign(Object.assign({}, data), { logo: uploadResult.secure_url }),
+        data: {
+            name: data.name,
+            description: data.description, // ✅ must be present
+            logo: uploadResult.secure_url,
+        },
     });
     return result;
 });

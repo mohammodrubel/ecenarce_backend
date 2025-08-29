@@ -6,10 +6,9 @@ import { sendImageCloudinary } from "../../utils/sendImageToCloudinary";
 
 const createBrand = async (
   file: Express.Multer.File,
-  data: { name: string; description: string }, // description is required
+  data: { name: string; description: string }, 
 ) => {
   if (!file) throw new AppError(httpStatus.CONFLICT, 'Image is required');
-
   const imageName =
     new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
 

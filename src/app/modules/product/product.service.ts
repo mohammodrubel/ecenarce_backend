@@ -4,13 +4,14 @@ import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
 import prisma from '../../utils/prisma';
 import { sendImageCloudinary } from '../../utils/sendImageToCloudinary';
+import { Product } from '@prisma/client';
 
-// Dummy async functions for CRUD operations
 
 export const createProduct = async (
-  data: any,
+  data: Product,
   files?: Express.Multer.File[],
 ) => {
+  // Validate images
   if (!files || files.length === 0) {
     throw new AppError(httpStatus.CONFLICT, 'At least one image is required');
   }
@@ -19,15 +20,29 @@ export const createProduct = async (
     throw new AppError(httpStatus.CONFLICT, 'Maximum 3 images are allowed');
   }
 
+  // Validate category
+  const isCategoryExist = await prisma.category.findUnique({
+    where: { id: data.categoryId },
+  });
+
+  if (!isCategoryExist) {
+    throw new AppError(httpStatus.CONFLICT, 'Invalid category Id');
+  }
+
+  // Validate brand
+  const isBrandExist = await prisma.brand.findUnique({
+    where: { id: data.brandId },
+  });
+
+  if (!isBrandExist) {
+    throw new AppError(httpStatus.CONFLICT, 'Invalid Brand Id');
+  }
+
   // Upload images to Cloudinary
   const imageUrls: string[] = [];
   for (const file of files) {
-    const imageName =
-      new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
-
-    // ✅ send buffer, not file object
+    const imageName = `${new Date().toTimeString().replace(/:/g, '-')}-${file.originalname}`;
     const uploadResult: any = await sendImageCloudinary(file.buffer, imageName);
-
     imageUrls.push(uploadResult.secure_url);
   }
 
@@ -42,9 +57,16 @@ export const createProduct = async (
   return result;
 };
 
+
 const getProduct = async (id: string) => {
-  // Fetch product by id from database
-  return { message: 'Product fetched', id };
+  const reuslt = await prisma.product.findUnique(
+    {
+      where: {
+        id: id
+      }
+    }
+  )
+  return reuslt
 };
 
 const getAllProducts = async () => {

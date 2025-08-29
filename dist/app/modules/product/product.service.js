@@ -18,19 +18,32 @@ const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const prisma_1 = __importDefault(require("../../utils/prisma"));
 const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
-// Dummy async functions for CRUD operations
 const createProduct = (data, files) => __awaiter(void 0, void 0, void 0, function* () {
+    // Validate images
     if (!files || files.length === 0) {
         throw new AppError_1.default(http_status_1.default.CONFLICT, 'At least one image is required');
     }
     if (files.length > 3) {
         throw new AppError_1.default(http_status_1.default.CONFLICT, 'Maximum 3 images are allowed');
     }
+    // Validate category
+    const isCategoryExist = yield prisma_1.default.category.findUnique({
+        where: { id: data.categoryId },
+    });
+    if (!isCategoryExist) {
+        throw new AppError_1.default(http_status_1.default.CONFLICT, 'Invalid category Id');
+    }
+    // Validate brand
+    const isBrandExist = yield prisma_1.default.brand.findUnique({
+        where: { id: data.brandId },
+    });
+    if (!isBrandExist) {
+        throw new AppError_1.default(http_status_1.default.CONFLICT, 'Invalid Brand Id');
+    }
     // Upload images to Cloudinary
     const imageUrls = [];
     for (const file of files) {
-        const imageName = new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
-        // ✅ send buffer, not file object
+        const imageName = `${new Date().toTimeString().replace(/:/g, '-')}-${file.originalname}`;
         const uploadResult = yield (0, sendImageToCloudinary_1.sendImageCloudinary)(file.buffer, imageName);
         imageUrls.push(uploadResult.secure_url);
     }
@@ -42,8 +55,12 @@ const createProduct = (data, files) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createProduct = createProduct;
 const getProduct = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    // Fetch product by id from database
-    return { message: 'Product fetched', id };
+    const reuslt = yield prisma_1.default.product.findUnique({
+        where: {
+            id: id
+        }
+    });
+    return reuslt;
 });
 const getAllProducts = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.product.findMany({

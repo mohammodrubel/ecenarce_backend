@@ -25,7 +25,7 @@ const createCategory = (file, data) => __awaiter(void 0, void 0, void 0, functio
     const imageName = new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
     const uploadResult = yield (0, sendImageToCloudinary_1.sendImageCloudinary)(file.buffer, imageName);
     const result = yield prisma_1.default.category.create({
-        data: Object.assign(Object.assign({}, data), { icon: uploadResult.secure_url })
+        data: Object.assign(Object.assign({}, data), { icon: uploadResult.secure_url }),
     });
     return result;
 });
@@ -46,8 +46,8 @@ const getCategory = (id) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const result = yield prisma_1.default.category.findFirst({
         where: {
-            id
-        }
+            id,
+        },
     });
     return result;
 });
@@ -74,11 +74,11 @@ const deleteCategory = (id) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const result = yield prisma_1.default.category.update({
         where: {
-            id
+            id,
         },
         data: {
-            isDeleted: true
-        }
+            isDeleted: true,
+        },
     });
     return result;
 });
