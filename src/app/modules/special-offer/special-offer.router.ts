@@ -1,23 +1,16 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { upload } from '../../utils/sendImageToCloudinary';
-import { CategoryController } from '../category/category.controller';
+
+import { SpecialOfferController } from './special-offer.controller';
 const router = Router();
 router
   .route('/')
-  .post(
-    upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-      req.body = JSON.parse(req.body.data);
-      next();
-    },
-    CategoryController.createCategory,
-  )
-  .get(CategoryController.getCategories);
+  .post(SpecialOfferController.crateSpecialOffer)
+  .get(SpecialOfferController.getAllSpecialOffers);
 
 router
   .route('/:id')
-  .get(CategoryController.getCategory)
-  .put(CategoryController.updateCategory)
-  .delete(CategoryController.deleteCategory);
+  .get(SpecialOfferController.getSingleSpecialOffer)
+  .put(SpecialOfferController.editSpecialOffer)
+  .delete(SpecialOfferController.deleteSpecialOffer);
 
-export const categoryRouter = router;
+export const SpecialOfferRouter = router;

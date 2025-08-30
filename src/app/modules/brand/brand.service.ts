@@ -72,7 +72,7 @@ const updateBrand = async (id: string, updateData: Partial<Brand>) => {
 
 const updatebrandPhoto = async (file: any, id: string) => {
     const isExist = await prisma.brand.findUnique({
-        where: { id },
+        where: { id }, 
     });
     if(!isExist){
         throw new AppError(httpStatus.CONFLICT,"invalid id ")
@@ -95,24 +95,32 @@ const updatebrandPhoto = async (file: any, id: string) => {
 
 }
 
-// Delete Category by ID
+// Delete Brand by ID and all associated products
 const deleteBrand = async (id: string) => {
     const isExist = await prisma.brand.findUnique({
         where: { id },
     });
+    
     if (!isExist) {
-        throw new AppError(httpStatus.NOT_FOUND, 'Brand  Not Found');
+        throw new AppError(httpStatus.NOT_FOUND, 'Brand Not Found');
     }
-    const result = await prisma.brand.delete(
-        {
-            where: {
-                id
-            }
-        }
-    )
-    return result
-};
 
+    // First delete all products associated with this brand
+    await prisma.product.deleteMany({
+        where: {
+            brandId: id
+        }
+    });
+
+    // Then delete the brand
+    const result = await prisma.brand.delete({
+        where: {
+            id
+        }
+    });
+
+    return result;
+};
 export const brandService = {
     createBrand,
     getAllBrand,
