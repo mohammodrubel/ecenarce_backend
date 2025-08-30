@@ -21,6 +21,7 @@ router
   .route('/:id')
   .get(BrandController.getBrand)
   .put(BrandController.updateBrand)
+  .patch(upload.single('file'), BrandController.updateBrandPhoto)
   .delete(BrandController.deleteBrand);
 
 export const brandRouter = router;

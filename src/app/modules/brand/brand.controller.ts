@@ -67,10 +67,23 @@ const deleteBrand = catchAsync(async (req, res) => {
   });
 });
 
+const updateBrandPhoto = catchAsync(async(req,res)=>{
+  const file = req.file 
+  const id =  req.params.id 
+  const result =await brandService.updatebrandPhoto(file,id)
+   sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'update image successfully',
+    data: result,
+  });
+})
+
 export const BrandController = {
   createBrand,
   getAllBrand,
   getBrand,
+  updateBrandPhoto,
   updateBrand,
   deleteBrand,
 };
