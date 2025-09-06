@@ -77,20 +77,25 @@ const updateCategory = async (id: string, updateData: Partial<Category>) => {
   return result;
 };
 const deleteCategory = async (id: string) => {
+  // Check if category exists
   const findCategory = await prisma.category.findUnique({ where: { id } });
   if (!findCategory) {
     throw new AppError(httpStatus.NOT_FOUND, 'Category not found');
   }
 
-  const result = await prisma.category.update({
-    where: {
-      id,
-    },
-    data: {
-      isDeleted: true,
-    },
+  // Soft-delete the category
+  const updatedCategory = await prisma.category.update({
+    where: { id },
+    data: { isDeleted: true },
   });
-  return result;
+
+  // Delete all products related to this category
+  await prisma.product.updateMany({
+    where: { categoryId: id },
+    data: { isDeleted: true }, 
+  });
+
+  return updatedCategory;
 };
 
 export const CategoryService = {
