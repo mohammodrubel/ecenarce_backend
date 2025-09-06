@@ -6,8 +6,9 @@ import { sendImageCloudinary } from "../../utils/sendImageToCloudinary";
 
 const createBrand = async (
     file: Express.Multer.File,
-    data: { name: string; description: string },
+    data:Brand,
 ) => {
+    console.log(data,'data')
     if (!file) throw new AppError(httpStatus.CONFLICT, 'Image is required');
     const imageName =
         new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
@@ -18,7 +19,7 @@ const createBrand = async (
     const result = await prisma.brand.create({
         data: {
             name: data.name,
-            description: data.description, // ✅ must be present
+            description: data.description,
             logo: uploadResult.secure_url,
         },
     });

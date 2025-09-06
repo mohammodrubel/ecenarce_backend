@@ -1,10 +1,18 @@
 import { NextFunction, Request, Response, Router } from 'express';
 
 import { SpecialOfferController } from './special-offer.controller';
+import { upload } from '../../utils/sendImageToCloudinary';
 const router = Router();
 router
   .route('/')
-  .post(SpecialOfferController.crateSpecialOffer)
+  .post(
+    upload.single('file'),
+    (req: Request, res: Response, next: NextFunction) => {
+      req.body = JSON.parse(req.body.data);
+      next();
+    },
+    SpecialOfferController.crateSpecialOffer,
+  )
   .get(SpecialOfferController.getAllSpecialOffers);
 
 router

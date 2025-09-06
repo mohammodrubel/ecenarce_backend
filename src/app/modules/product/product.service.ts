@@ -71,13 +71,17 @@ const getProduct = async (id: string) => {
 
 const getAllProducts = async () => {
   const result = await prisma.product.findMany({
+    where: {
+      isDeleted: false,
+    },
     include: {
-      category: true,
-      brand: true,
+      category: true, // include related category
+      brand: true, // include related brand
     },
   });
   return result;
 };
+
 
 const updateProduct = async (id: string, data: any) => {
   // Update product by id in database
@@ -85,8 +89,19 @@ const updateProduct = async (id: string, data: any) => {
 };
 
 const deleteProduct = async (id: string) => {
-  // Delete product by id from database
-  return { message: 'Product deleted', id };
+    const isExistProduct = await prisma.product.update(
+     {
+      where:{
+        id:id 
+      },
+      data:{
+        isDeleted:true
+      }
+     }
+    )
+    if(!isExistProduct){
+      throw new AppError(httpStatus.NOT_FOUND,'this product is not found')
+    }
 };
 
 export const ProductService = {

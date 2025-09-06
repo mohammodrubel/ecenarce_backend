@@ -30,7 +30,7 @@ enum UserRole {
 model Brand {
   id          String    @id @default(uuid())
   logo String?
-  name        String    @unique
+  name        String    
   description String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -90,6 +90,7 @@ model Product {
   images           String[]
   rating           Float?
   reviewsCount     Int          @default(0)
+  isDeleted Boolean @default(false)
   badge            ProductType   @default(NEW)
   inStock          Boolean      @default(true)
   createdAt        DateTime     @default(now())
@@ -104,7 +105,7 @@ model Product {
 
 model SpecialOffer {
   id            String   @id @default(uuid())
- title String      
+  title String      
   category String
   subcategory String
   price Int

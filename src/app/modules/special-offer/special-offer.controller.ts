@@ -1,9 +1,16 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
+import { SpecialOfferService } from './special-offer.service';
+import AppError from '../../errors/AppError';
 
 const crateSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = ''; // service logic will go here
+   const file = req.file;
+   if (!file) {
+     throw new AppError(httpStatus.CONFLICT, 'special-offer image is required');
+   }
+
+  const result = SpecialOfferService.crateSpecialOffer(file, req.body)
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -13,7 +20,7 @@ const crateSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 const getAllSpecialOffers = catchAsync(async (req, res, next) => {
-  const result = ''; // service logic will go here
+  const result = SpecialOfferService.getAllSpecialOffers()
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -23,7 +30,7 @@ const getAllSpecialOffers = catchAsync(async (req, res, next) => {
 });
 
 const getSingleSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = ''; // service logic will go here
+  const result = SpecialOfferService.getAllSpecialOffers()
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -33,7 +40,7 @@ const getSingleSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 const editSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = ''; // service logic will go here
+  const result = SpecialOfferService.editSpecialOffer(req.params.id,req.body)
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -43,7 +50,7 @@ const editSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 const deleteSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = ''; // service logic will go here
+  const result = SpecialOfferService.deleteSpecialOffer(req.params.id)
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

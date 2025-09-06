@@ -35,7 +35,7 @@ const routes: Route[] = [
     route: productRouter,
   },
   {
-    path: 'special-offer',
+    path: '/special-offer',
     route: SpecialOfferRouter,
   },
 ];
