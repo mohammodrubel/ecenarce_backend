@@ -11,7 +11,7 @@ router
       req.body = JSON.parse(req.body.data);
       next();
     },
-    SpecialOfferController.crateSpecialOffer,
+    SpecialOfferController.createSpecialOffer,
   )
   .get(SpecialOfferController.getAllSpecialOffers);
 

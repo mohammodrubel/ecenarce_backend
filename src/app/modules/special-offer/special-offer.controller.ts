@@ -4,13 +4,13 @@ import sendResponse from '../../utils/sendResponse';
 import { SpecialOfferService } from './special-offer.service';
 import AppError from '../../errors/AppError';
 
-const crateSpecialOffer = catchAsync(async (req, res, next) => {
-   const file = req.file;
-   if (!file) {
-     throw new AppError(httpStatus.CONFLICT, 'special-offer image is required');
-   }
+const createSpecialOffer = catchAsync(async (req, res, next) => {
+  const file = req.file;
+  if (!file) {
+    throw new AppError(httpStatus.CONFLICT, 'special-offer image is required');
+  }
 
-  const result = SpecialOfferService.crateSpecialOffer(file, req.body)
+  const result = await SpecialOfferService.createSpecialOffer(file, req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -20,7 +20,7 @@ const crateSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 const getAllSpecialOffers = catchAsync(async (req, res, next) => {
-  const result = SpecialOfferService.getAllSpecialOffers()
+  const result = await SpecialOfferService.getAllSpecialOffers();
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -30,7 +30,7 @@ const getAllSpecialOffers = catchAsync(async (req, res, next) => {
 });
 
 const getSingleSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = SpecialOfferService.getAllSpecialOffers()
+  const result = await SpecialOfferService.getSingleSpecialOffer(req.params.id);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -40,7 +40,12 @@ const getSingleSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 const editSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = SpecialOfferService.editSpecialOffer(req.params.id,req.body)
+  const file = req.file;
+  const result = await SpecialOfferService.editSpecialOffer(
+    req.params.id,
+    req.body,
+    file,
+  );
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -50,7 +55,7 @@ const editSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 const deleteSpecialOffer = catchAsync(async (req, res, next) => {
-  const result = SpecialOfferService.deleteSpecialOffer(req.params.id)
+  const result = await SpecialOfferService.deleteSpecialOffer(req.params.id);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -60,7 +65,7 @@ const deleteSpecialOffer = catchAsync(async (req, res, next) => {
 });
 
 export const SpecialOfferController = {
-  crateSpecialOffer,
+  createSpecialOffer, // Fixed typo
   getAllSpecialOffers,
   getSingleSpecialOffer,
   editSpecialOffer,

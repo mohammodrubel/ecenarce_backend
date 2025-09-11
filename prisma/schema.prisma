@@ -39,19 +39,7 @@ model Brand {
   @@map("brands")
 }
 
-// Category model
-model Category {
-  id            String    @id @default(uuid())
-  name          String
-  icon          String?
-  subcategories String[]
-  products      Product[]
-  isDeleted     Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
 
-  @@map("categories")
-}
 
 // Discount type enum
 enum DiscountType {
@@ -103,19 +91,30 @@ model Product {
 }
 
 
-model SpecialOffer {
-  id            String   @id @default(uuid())
-  title String      
-  category String
-  subcategory String
-  price Int
-  discount Int
-  sold Int 
-  available Int 
-  image String
-  timer String
+model Category {
+  id            String        @id @default(uuid())
+  name          String
+  icon          String?
+  subcategories String[]
+  products      Product[]
+  specialOffers SpecialOffer[]
+  isDeleted     Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("categories")
 }
 
+model SpecialOffer {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  categoryId  String
+  image       String
+  date        DateTime
+  time        String
+  category    Category @relation(fields: [categoryId], references: [id])
+}
 model Slider {
   id String @id @default(uuid())
   amount String 
