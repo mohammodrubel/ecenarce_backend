@@ -115,3 +115,14 @@ model SpecialOffer {
   image String
   timer String
 }
+
+model Slider {
+  id String @id @default(uuid())
+  amount String 
+  title String 
+  description String 
+  buttonText String 
+  photo String 
+  isDeleted Boolean
+}
+
