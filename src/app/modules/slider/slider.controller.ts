@@ -1,10 +1,11 @@
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import { SliderService } from "./slider.service";
 
 // ✅ Create Slider
 const createSlider = catchAsync(async (req, res) => {
-  const result = {}; // TODO: replace with prisma/DB call
+  const result = SliderService.crateSlider(req.body)
 
   sendResponse(res, {
     success: true,
@@ -16,7 +17,7 @@ const createSlider = catchAsync(async (req, res) => {
 
 // ✅ Get All Sliders
 const getAllSliders = catchAsync(async (req, res) => {
-  const result = []; // TODO: replace with prisma/DB call
+  const result = SliderService.GetAllSlider()
 
   sendResponse(res, {
     success: true,
@@ -29,7 +30,7 @@ const getAllSliders = catchAsync(async (req, res) => {
 // ✅ Get Single Slider
 const getSingleSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = {}; // TODO: replace with prisma/DB call using id
+  const result = SliderService.GetSingleSlider(id)
 
   sendResponse(res, {
     success: true,
@@ -43,7 +44,7 @@ const getSingleSlider = catchAsync(async (req, res) => {
 const updateSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
-  const result = {}; // TODO: replace with prisma/DB update using id + payload
+  const result = SliderService.updateSlider(id,payload)
 
   sendResponse(res, {
     success: true,
@@ -56,7 +57,7 @@ const updateSlider = catchAsync(async (req, res) => {
 // ✅ Delete Slider
 const deleteSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = {}; // TODO: replace with prisma/DB delete using id
+  const result = SliderService.DeleteSlider(id)
 
   sendResponse(res, {
     success: true,
@@ -66,7 +67,7 @@ const deleteSlider = catchAsync(async (req, res) => {
   });
 });
 
-const SliderController = {
+export const SliderController = {
   createSlider,
   getAllSliders,
   getSingleSlider,

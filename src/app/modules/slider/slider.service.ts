@@ -1,21 +1,12 @@
-const crateSlider = async () => {
+import { Slider } from '@prisma/client';
 
-};
-const GetAllSlider = async () => {
+const crateSlider = async (payload: Slider) => {};
+const GetAllSlider = async () => {};
+const GetSingleSlider = async (id: string) => {};
+const updateSlider = async (id: string, payload: Partial<Slider>) => {};
+const DeleteSlider = async (id: string) => {};
 
-};
-const GetSingleSlider = async () => {
-
-};
-const updateSlider = async () => {
-
-};
-const DeleteSlider = async () => {
-
-};
-
-
-const SliderService = {
+export const SliderService = {
   crateSlider,
   GetAllSlider,
   GetSingleSlider,

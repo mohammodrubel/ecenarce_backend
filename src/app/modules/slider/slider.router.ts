@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 
-import { SpecialOfferController } from './special-offer.controller';
 import { upload } from '../../utils/sendImageToCloudinary';
+import SliderController from './slider.controller';
 const router = Router();
 router
   .route('/')
@@ -11,14 +11,14 @@ router
       req.body = JSON.parse(req.body.data);
       next();
     },
-    SpecialOfferController.createSpecialOffer,
+    SliderController.createSlider,
   )
-  .get(SpecialOfferController.getAllSpecialOffers);
+  .get(SliderController.getSingleSlider);
 
 router
   .route('/:id')
-  .get(SpecialOfferController.getSingleSpecialOffer)
-  .put(SpecialOfferController.editSpecialOffer)
-  .delete(SpecialOfferController.deleteSpecialOffer);
+  .get(SliderController.getSingleSlider)
+  .put(SliderController.updateSlider)
+  .delete(SliderController.deleteSlider);
 
 export const SpecialOfferRouter = router;
