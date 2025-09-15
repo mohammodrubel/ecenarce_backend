@@ -5,7 +5,7 @@ import { SliderService } from "./slider.service";
 
 // ✅ Create Slider
 const createSlider = catchAsync(async (req, res) => {
-  const result = SliderService.crateSlider(req.body)
+  const result = await SliderService.crateSlider(req.body);
 
   sendResponse(res, {
     success: true,
@@ -17,7 +17,7 @@ const createSlider = catchAsync(async (req, res) => {
 
 // ✅ Get All Sliders
 const getAllSliders = catchAsync(async (req, res) => {
-  const result = SliderService.GetAllSlider()
+  const result = await SliderService.GetAllSlider();
 
   sendResponse(res, {
     success: true,
@@ -30,7 +30,7 @@ const getAllSliders = catchAsync(async (req, res) => {
 // ✅ Get Single Slider
 const getSingleSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = SliderService.GetSingleSlider(id)
+  const result = await SliderService.GetSingleSlider(id);
 
   sendResponse(res, {
     success: true,
@@ -44,7 +44,7 @@ const getSingleSlider = catchAsync(async (req, res) => {
 const updateSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
-  const result = SliderService.updateSlider(id,payload)
+  const result = await SliderService.updateSlider(id, payload);
 
   sendResponse(res, {
     success: true,
@@ -57,7 +57,7 @@ const updateSlider = catchAsync(async (req, res) => {
 // ✅ Delete Slider
 const deleteSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = SliderService.DeleteSlider(id)
+  const result =await SliderService.DeleteSlider(id)
 
   sendResponse(res, {
     success: true,

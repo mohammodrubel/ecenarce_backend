@@ -14,4 +14,4 @@ router
   .put(SliderController.updateSlider)
   .delete(SliderController.deleteSlider);
 
-export const SpecialOfferRouter = router;
+export const SliderRouter = router;

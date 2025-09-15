@@ -5,6 +5,7 @@ import { categoryRouter } from '../modules/category/category.route';
 import { brandRouter } from '../modules/brand/brand.routes';
 import { productRouter } from '../modules/product/product.router';
 import { SpecialOfferRouter } from '../modules/special-offer/special-offer.router';
+import { SliderRouter } from '../modules/slider/slider.router';
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const routes: Route[] = [
   {
     path: '/special-offer',
     route: SpecialOfferRouter,
+  },
+  {
+    path: '/slider',
+    route: SliderRouter,
   },
 ];
 
