@@ -5,14 +5,7 @@ import SliderController from './slider.controller';
 const router = Router();
 router
   .route('/')
-  .post(
-    upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-      req.body = JSON.parse(req.body.data);
-      next();
-    },
-    SliderController.createSlider,
-  )
+  .post(SliderController.createSlider)
   .get(SliderController.getSingleSlider);
 
 router
