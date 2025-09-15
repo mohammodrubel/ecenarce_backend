@@ -1,6 +1,12 @@
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
+-- CreateEnum
+CREATE TYPE "DiscountType" AS ENUM ('FLAT', 'PERCENTAGE');
+
+-- CreateEnum
+CREATE TYPE "ProductType" AS ENUM ('HOT', 'NEW', 'UPCOMING', 'SALE', 'FEATURED', 'LIMITED', 'TRENDING', 'EXCLUSIVE');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -18,13 +24,41 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "brands" (
     "id" TEXT NOT NULL,
-    "logo" TEXT NOT NULL,
+    "logo" TEXT,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "brands_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "products" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "subcategory" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "originalPrice" DOUBLE PRECISION NOT NULL,
+    "discountType" "DiscountType",
+    "discountValue" DOUBLE PRECISION,
+    "discountStart" TIMESTAMP(3),
+    "discountEnd" TIMESTAMP(3),
+    "stock" INTEGER NOT NULL,
+    "sku" TEXT NOT NULL,
+    "brandId" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
+    "images" TEXT[],
+    "rating" DOUBLE PRECISION,
+    "reviewsCount" INTEGER NOT NULL DEFAULT 0,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "badge" "ProductType" NOT NULL DEFAULT 'NEW',
+    "inStock" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "products_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -41,33 +75,33 @@ CREATE TABLE "categories" (
 );
 
 -- CreateTable
-CREATE TABLE "products" (
+CREATE TABLE "SpecialOffer" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "description" TEXT,
-    "subcategory" TEXT NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
-    "originalPrice" DOUBLE PRECISION NOT NULL,
-    "stock" INTEGER NOT NULL,
-    "sku" TEXT NOT NULL,
-    "brandId" TEXT NOT NULL,
     "categoryId" TEXT NOT NULL,
-    "images" TEXT[],
-    "rating" DOUBLE PRECISION,
-    "reviewsCount" INTEGER DEFAULT 0,
-    "badge" TEXT,
-    "inStock" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "image" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "time" TEXT NOT NULL,
 
-    CONSTRAINT "products_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SpecialOffer_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Slider" (
+    "id" TEXT NOT NULL,
+    "amount" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "buttonText" TEXT NOT NULL,
+    "photo" TEXT NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL,
+
+    CONSTRAINT "Slider_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "brands_name_key" ON "brands"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "products_sku_key" ON "products"("sku");
@@ -77,3 +111,6 @@ ALTER TABLE "products" ADD CONSTRAINT "products_brandId_fkey" FOREIGN KEY ("bran
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SpecialOffer" ADD CONSTRAINT "SpecialOffer_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

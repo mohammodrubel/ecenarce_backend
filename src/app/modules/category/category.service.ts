@@ -8,28 +8,36 @@ import httpStatus from 'http-status';
 import { sendImageCloudinary } from '../../utils/sendImageToCloudinary';
 
 // Create Category
+// Sanitize filename for Cloudinary
+function sanitizeFileName(filename: string) {
+  return filename
+    .replace(/[:\s()+]/g, '_') // replace spaces, :, (), +
+    .replace(/&/g, 'and');     // replace & with 'and'
+}
 
 const createCategory = async (
-  file: Express.Multer.File | undefined,
-  data: any,
+  file: Express.Multer.File,
+  data: any
 ) => {
-  if (!file) {
-    throw new AppError(httpStatus.CONFLICT, 'Icon is required');
-  }
-  const imageName =
-    new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
+  const imageName = sanitizeFileName(
+    new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname
+  );
 
   const uploadResult: any = await sendImageCloudinary(file.buffer, imageName);
 
-  const result = await prisma.category.create({
+  const category = await prisma.category.create({
     data: {
       ...data,
       icon: uploadResult.secure_url,
     },
   });
-  return result;
+
+  return category;
 };
 
+export default {
+  createCategory,
+};
 // Get All Categories
 const getCategories = async () => {
   const reuslt = await prisma.category.findMany({

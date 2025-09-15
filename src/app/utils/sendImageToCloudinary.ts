@@ -15,17 +15,16 @@ export const sendImageCloudinary = async (
 ): Promise<UploadApiResponse> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { public_id: publicId || new Date().toISOString() },
+      { public_id: publicId },
       (error, result) => {
         if (error) return reject(error);
         if (result) return resolve(result);
       },
     );
 
-    stream.end(buffer); // send buffer to Cloudinary
+    stream.end(buffer);
   });
 };
-
 // Multer config (memory storage → keeps files in RAM, no disk writes)
 const storage = multer.memoryStorage();
 export const upload = multer({ storage });

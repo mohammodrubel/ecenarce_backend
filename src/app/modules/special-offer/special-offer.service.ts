@@ -12,47 +12,44 @@ const createSpecialOffer = async (
   if (!file) throw new AppError(httpStatus.CONFLICT, 'Image is required');
 
   // Validate required fields
-  if (!data.title || !data.categoryId) {
+  if (!data.title || !data.productId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      'Title and categoryId are required',
+      'Title and ProductID are required',
     );
   }
 
-  // Check if category exists
-  const category = await prisma.category.findUnique({
-    where: { id: data.categoryId, isDeleted: false },
+  // Check if product exists
+  const product = await prisma.product.findUnique({
+    where: { id: data.productId, isDeleted: false },
   });
-  if (!category) throw new AppError(httpStatus.NOT_FOUND, 'Category not found');
+  if (!product) throw new AppError(httpStatus.NOT_FOUND, 'Product not found');
 
   // Upload image to Cloudinary
   const imageName =
-    new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
+    new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
   const uploadResult = await sendImageCloudinary(file.buffer, imageName);
 
-  // Prepare date & time
-  const now = new Date();
-  const offerDate = data.date
-    ? new Date(`${data.date}T${data.time || '00:00'}:00`)
-    : now; // fallback to current date & time
-  const offerTime = data.time || now.toTimeString().split(' ')[0]; // HH:mm:ss
+  // Prepare dates
+  const validFrom = data.validFrom ? new Date(data.validFrom) : new Date();
+  const validUntil = data.validUntil ? new Date(data.validUntil) : null;
 
   // Create SpecialOffer
   const result = await prisma.specialOffer.create({
     data: {
       title: data.title,
       description: data.description || null,
-      categoryId: data.categoryId,
+      productId: data.productId,
       image: uploadResult.secure_url,
-      date: offerDate,
-      time: offerTime,
+      validFrom,
+      validUntil,
     },
     include: {
-      category: {
+      product: {
         select: {
           id: true,
           name: true,
-          icon: true,
+          images: true,
         },
       },
     },
@@ -61,35 +58,34 @@ const createSpecialOffer = async (
   return result;
 };
 
-// ✅ Get All
+// ✅ Get All Special Offers
 const getAllSpecialOffers = async () => {
   return await prisma.specialOffer.findMany({
-    where: {
-      category: { isDeleted: false },
-    },
     include: {
-      category: {
+      product: {
         select: {
           id: true,
           name: true,
-          icon: true,
+          images: true,
+          stock: true,
         },
       },
     },
-    // orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: 'desc' },
   });
 };
 
-// ✅ Get Single
+// ✅ Get Single Special Offer
 const getSingleSpecialOffer = async (id: string) => {
   const result = await prisma.specialOffer.findUnique({
     where: { id },
     include: {
-      category: {
+      product: {
         select: {
           id: true,
           name: true,
-          icon: true,
+          images: true,
+          stock:true,
         },
       },
     },
@@ -101,7 +97,7 @@ const getSingleSpecialOffer = async (id: string) => {
   return result;
 };
 
-// ✅ Edit
+// ✅ Edit Special Offer
 const editSpecialOffer = async (
   id: string,
   data: Partial<SpecialOffer>,
@@ -109,58 +105,64 @@ const editSpecialOffer = async (
 ) => {
   const offer = await prisma.specialOffer.findUnique({
     where: { id },
-    include: { category: true },
+    include: { product: true },
   });
+
   if (!offer)
     throw new AppError(httpStatus.NOT_FOUND, 'Special offer not found');
 
-  // Validate category if updated
-  if (data.categoryId && data.categoryId !== offer.categoryId) {
-    const category = await prisma.category.findUnique({
-      where: { id: data.categoryId, isDeleted: false },
+  // Validate product if updated
+  if (data.productId && data.productId !== offer.productId) {
+    const product = await prisma.product.findUnique({
+      where: { id: data.productId, isDeleted: false },
     });
-    if (!category)
-      throw new AppError(httpStatus.NOT_FOUND, 'Category not found');
+    if (!product) throw new AppError(httpStatus.NOT_FOUND, 'Product not found');
   }
 
+  // Upload new image if provided
   let imageUrl = offer.image;
   if (file) {
     const imageName =
-      new Date().toTimeString().replace(/:/g, '-') + '-' + file.originalname;
+      new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
     const uploadResult = await sendImageCloudinary(file.buffer, imageName);
     imageUrl = uploadResult.secure_url;
   }
 
-  return await prisma.specialOffer.update({
+  // Update SpecialOffer
+  const updatedOffer = await prisma.specialOffer.update({
     where: { id },
     data: {
       ...data,
       image: imageUrl,
-      date: data.date || offer.date, // keep old if not updated
-      time: data.time || offer.time, // keep old if not updated
+      validFrom: data.validFrom ? new Date(data.validFrom) : offer.validFrom,
+      validUntil: data.validUntil
+        ? new Date(data.validUntil)
+        : offer.validUntil,
     },
     include: {
-      category: {
+      product: {
         select: {
           id: true,
           name: true,
-          icon: true,
+          images: true,
         },
       },
     },
   });
+
+  return updatedOffer;
 };
 
-// ✅ Delete
+// ✅ Delete Special Offer
 const deleteSpecialOffer = async (id: string) => {
-  const result = await prisma.specialOffer.findUnique({ where: { id } });
-  if (!result)
+  const offer = await prisma.specialOffer.findUnique({ where: { id } });
+  if (!offer)
     throw new AppError(httpStatus.NOT_FOUND, 'Special offer not found');
 
   return await prisma.specialOffer.delete({
     where: { id },
     include: {
-      category: {
+      product: {
         select: {
           id: true,
           name: true,

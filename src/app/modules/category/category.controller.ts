@@ -2,17 +2,24 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { CategoryService } from './category.service';
+import AppError from '../../errors/AppError';
 
 // Create Category
 const createCategory = catchAsync(async (req, res) => {
-  const file = req.file;
-  const result = await CategoryService.createCategory(file,req.body);
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.CREATED,
-    message: 'Category Created Successfully',
-    data: result,
-  });
+const file = req.file;
+
+if (!file) {
+  throw new AppError(httpStatus.CONFLICT, 'Icon is required');
+}
+
+const result = await CategoryService.createCategory(file, req.body);
+
+sendResponse(res, {
+  success: true,
+  statusCode: httpStatus.CREATED,
+  message: 'Category Created Successfully',
+  data: result,
+});
 });
 
 // Get All Categories
