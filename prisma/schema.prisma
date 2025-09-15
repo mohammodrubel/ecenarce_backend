@@ -30,14 +30,14 @@ enum UserRole {
 
 // --------------------- BRAND ---------------------
 model Brand {
-  id        String    @id @default(uuid())
-  logo      String?
-  name      String
+  id          String    @id @default(uuid())
+  logo        String?
+  name        String
   description String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  products  Product[]
+  products    Product[]
 
   @@map("brands")
 }
@@ -79,8 +79,8 @@ model Product {
   name          String
   description   String
   subcategory   String
-  price         Float        // Final price after discount
-  originalPrice Float        // Price before discount
+  price         Float
+  originalPrice Float
   discountType  DiscountType?
   discountValue Float?
   discountStart DateTime?
@@ -98,9 +98,12 @@ model Product {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  brand         Brand        @relation(fields: [brandId], references: [id])
-  category      Category     @relation(fields: [categoryId], references: [id])
-  specialOffers SpecialOffer[]
+  brand         Brand        @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  category      Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  // ✅ One-to-one relations
+  specialOffer  SpecialOffer?
+  slider        Slider?
 
   orders        Order[]
 
@@ -112,7 +115,7 @@ model SpecialOffer {
   id          String   @id @default(uuid())
   title       String
   description String?
-  productId   String
+  productId   String   @unique
   image       String
   validFrom   DateTime
   validUntil  DateTime?
@@ -121,7 +124,7 @@ model SpecialOffer {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  product     Product  @relation(fields: [productId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   orders      Order[]
 
   @@map("special_offers")
@@ -138,9 +141,9 @@ model Order {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  user           User          @relation(fields: [userId], references: [id])
-  product        Product       @relation(fields: [productId], references: [id])
-  specialOffer   SpecialOffer? @relation(fields: [specialOfferId], references: [id])
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  specialOffer   SpecialOffer? @relation(fields: [specialOfferId], references: [id], onDelete: Cascade)
 
   @@map("orders")
 }
@@ -152,10 +155,12 @@ model Slider {
   title       String
   description String
   buttonText  String
-  photo       String
+  productId   String   @unique
   isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("sliders")
 }
