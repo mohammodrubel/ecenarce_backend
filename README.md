@@ -1,32 +1,23 @@
-# Rocks Mart API Documentation
-
-Welcome to the **Rocks Mart** API! This document contains all available endpoints for managing **users**, **categories**, **brands**, **products**, and **special offers**. You can test all endpoints via **Postman**.
-
-**Postman Collection:** [Import Here](https://wcc-devs.postman.co/workspace/SOLVE-MEET~db0943aa-303e-475d-a061-03d4e72c2c7b/collection/29634377-87c75dc9-25f8-4a4e-ab8c-419ab33944a7?action=share&source=collection_link&creator=29634377)  
-
----
-
-## Base URL
 
 ---
 
 ## **USER Endpoints**
 
-| Endpoint | Method | Request Body | Description |
-|----------|--------|--------------|-------------|
-| `/auth/login` | POST | `{ "email": "rubel@gmail.com", "password": "rubel@gmail.com" }` | Authenticate a user and retrieve a token |
-| `/auth/register` | GET | None | Register a new user |
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/auth/login` | POST | Authenticate a user and retrieve a token | Login with registered email and password |
+| `/auth/register` | GET | Register a new user | Open the registration form or endpoint |
 
 ---
 
 ## **CATEGORY Endpoints**
 
-| Endpoint | Method | Request Body | Description |
-|----------|--------|--------------|-------------|
-| `/category` | POST | Form-data:<br>`data` JSON string:<br>`{ "name": "Updated Electronics", "subcategories": ["Mobiles", "Laptops"] }`<br>`file`: image file | Create a new category |
-| `/category` | GET | None | Retrieve all categories |
-| `/category/:id` | GET | None | Retrieve a single category by ID |
-| `/category/:id` | PUT | JSON:<br>`{ "subcategories": ["Mobile","TV"] }` | Update a category by ID |
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/category` | POST | Create a new category | Include category name, subcategories, and an image |
+| `/category` | GET | Retrieve all categories | List of all categories |
+| `/category/:id` | GET | Retrieve details of a single category | Fetch category by its ID |
+| `/category/:id` | PUT | Update a category by ID | Change subcategories or other properties |
 
 > Replace `:id` with the actual category UUID.
 
@@ -34,13 +25,13 @@ Welcome to the **Rocks Mart** API! This document contains all available endpoint
 
 ## **BRAND Endpoints**
 
-| Endpoint | Method | Request Body | Description |
-|----------|--------|--------------|-------------|
-| `/brand` | POST | Form-data:<br>`data` JSON string:<br>`{ "name": "hello", "description": "info" }`<br>`file`: image file | Create a new brand |
-| `/brand/:id` | PATCH | Form-data:<br>`file`: image file | Update brand image |
-| `/brand/:id` | PATCH | Form-data:<br>`file`: image file | Edit brand data |
-| `/brand` | GET | None | Retrieve all brands |
-| `/brand/:id` | GET | None | Retrieve a single brand by ID |
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/brand` | POST | Create a new brand | Include brand name, description, and image |
+| `/brand/:id` | PATCH | Update brand image | Upload a new brand image |
+| `/brand/:id` | PATCH | Edit brand data | Update brand information such as description |
+| `/brand` | GET | Retrieve all brands | List of all brands |
+| `/brand/:id` | GET | Retrieve a single brand by ID | Fetch brand details by ID |
 
 > Replace `:id` with the actual brand UUID.
 
@@ -48,11 +39,11 @@ Welcome to the **Rocks Mart** API! This document contains all available endpoint
 
 ## **PRODUCT Endpoints**
 
-| Endpoint | Method | Request Body | Description |
-|----------|--------|--------------|-------------|
-| `/products` | POST | Form-data:<br>`data` JSON string:<br>`{ "name": "Wireless Bluetooth Headphones", "description": "Noise-cancelling over-ear headphones with long battery life.", "subcategory": "Headphones", "price": 99.99, "originalPrice": 129.99, "stock": 50, "sku": "WH-d2d0dfs2s5-BT", "brandId": "<brand_id>", "categoryId": "<category_id>", "rating": 4.5, "reviewsCount": 128, "badge": "Best Seller", "inStock": true }`<br>`files`: image files | Create a new product |
-| `/products` | GET | None | Retrieve all products |
-| `/products/:id` | GET | None | Retrieve a single product by ID |
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/products` | POST | Create a new product | Include product details, images, category and brand references |
+| `/products` | GET | Retrieve all products | List of all products |
+| `/products/:id` | GET | Retrieve a single product by ID | Fetch product details by its ID |
 
 > Replace `:id` with the actual product UUID.
 
@@ -60,25 +51,49 @@ Welcome to the **Rocks Mart** API! This document contains all available endpoint
 
 ## **SPECIAL OFFER Endpoints**
 
-| Endpoint | Method | Request Body | Description |
-|----------|--------|--------------|-------------|
-| `/special-offer` | GET | None | Create or retrieve special offers |
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/special-offer` | GET | Create or retrieve special offers | Fetch all current offers or create a new one |
 
 ---
 
 ## Notes
 
-- **All file uploads** must be sent as `form-data`.
-- Replace `:id` in endpoints with the actual **UUID** of the resource.
-- JSON data should follow the structure provided in the examples.
-- Base URL can be changed to your production server when deploying.
+- Replace `:id` in endpoints with the actual UUID of the resource.
+- File uploads must be sent as **form-data**.
+- Use the **Postman collection** for testing requests quickly.
+- Responses are returned in **JSON format**, including success/failure messages.
 
 ---
 
-## Example cURL Requests
+## Example Usage
 
 ### Login
-```bash
-curl -X POST http://localhost:9000/api/v1/auth/login \
--H "Content-Type: application/json" \
--d '{"email":"rubel@gmail.com","password":"rubel@gmail.com"}'
+- **Description:** Authenticate a user.
+- **Example:** Send POST request to `/auth/login` with email and password. You will receive an authentication token.
+
+### Create Category
+- **Description:** Add a new category with optional subcategories and an image.
+- **Example:** Send POST request to `/category` with category name, subcategories, and file upload.
+
+### Create Product
+- **Description:** Add a new product with details, images, category, and brand references.
+- **Example:** Send POST request to `/products` with product information and multiple images.
+
+### Update Brand Image
+- **Description:** Update the image for a brand.
+- **Example:** Send PATCH request to `/brand/:id` with new image file.
+
+### Get All Products
+- **Description:** Retrieve all available products.
+- **Example:** Send GET request to `/products` to fetch a list of all products.
+
+---
+
+This version is **clean, readable, and professional** for GitHub — no raw JSON is included, only clear descriptions and examples.  
+
+---
+
+I can also make an **even cleaner GitHub version with collapsible sections for each resource** so it looks like official documentation.  
+
+Do you want me to do that next?
