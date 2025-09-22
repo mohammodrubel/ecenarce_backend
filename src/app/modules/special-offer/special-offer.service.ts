@@ -26,8 +26,7 @@ const createSpecialOffer = async (
   if (!product) throw new AppError(httpStatus.NOT_FOUND, 'Product not found');
 
   // Upload image to Cloudinary
-  const imageName =
-    new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
+  const imageName =file.originalname;
   const uploadResult = await sendImageCloudinary(file.buffer, imageName);
 
   // Prepare dates

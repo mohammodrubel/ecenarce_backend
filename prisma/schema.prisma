@@ -151,7 +151,6 @@ model Order {
 // --------------------- SLIDER ---------------------
 model Slider {
   id          String   @id @default(uuid())
-  amount      String
   title       String
   description String
   buttonText  String
