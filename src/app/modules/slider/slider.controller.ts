@@ -1,68 +1,93 @@
-import httpStatus from "http-status";
-import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
-import { SliderService } from "./slider.service";
+import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { SliderService } from './slider.service';
 
-// ✅ Create Slider
+// Create slider
 const createSlider = catchAsync(async (req, res) => {
-  const result = await SliderService.crateSlider(req.body);
+  const result = await SliderService.createSlider(req.body);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
-    message: "Slider created successfully",
+    message: 'Slider created successfully',
     data: result,
   });
 });
 
-// ✅ Get All Sliders
+// Get all sliders
 const getAllSliders = catchAsync(async (req, res) => {
-  const result = await SliderService.GetAllSlider();
+  const result = await SliderService.getAllSliders();
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Sliders retrieved successfully",
+    message: 'Sliders retrieved successfully',
     data: result,
   });
 });
 
-// ✅ Get Single Slider
+// Get single slider
 const getSingleSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await SliderService.GetSingleSlider(id);
+
+  if (!id) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.BAD_REQUEST,
+      message: 'Slider ID is required',
+    });
+  }
+
+  const result = await SliderService.getSingleSlider(id);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Slider retrieved successfully",
+    message: 'Slider retrieved successfully',
     data: result,
   });
 });
 
-// ✅ Update Slider
+// Update slider
 const updateSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
+  if (!id) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.BAD_REQUEST,
+      message: 'Slider ID is required',
+    });
+  }
+
   const payload = req.body;
   const result = await SliderService.updateSlider(id, payload);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Slider updated successfully",
+    message: 'Slider updated successfully',
     data: result,
   });
 });
 
-// ✅ Delete Slider
+// Delete slider
 const deleteSlider = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result =await SliderService.DeleteSlider(id)
+  if (!id) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.BAD_REQUEST,
+      message: 'Slider ID is required',
+    });
+  }
+
+  const result = await SliderService.deleteSlider(id);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Slider deleted successfully",
+    message: 'Slider deleted successfully',
     data: result,
   });
 });

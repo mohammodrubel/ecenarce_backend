@@ -5,14 +5,7 @@ import { upload } from '../../utils/sendImageToCloudinary';
 const router = Router();
 router
   .route('/')
-  .post(
-    upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-      req.body = JSON.parse(req.body.data);
-      next();
-    },
-    SpecialOfferController.createSpecialOffer,
-  )
+  .post(SpecialOfferController.createSpecialOffer)
   .get(SpecialOfferController.getAllSpecialOffers);
 
 router

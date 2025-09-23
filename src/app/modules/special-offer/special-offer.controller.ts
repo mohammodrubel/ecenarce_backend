@@ -5,12 +5,8 @@ import { SpecialOfferService } from './special-offer.service';
 import AppError from '../../errors/AppError';
 
 const createSpecialOffer = catchAsync(async (req, res, next) => {
-  const file = req.file;
-  if (!file) {
-    throw new AppError(httpStatus.CONFLICT, 'special-offer image is required');
-  }
 
-  const result = await SpecialOfferService.createSpecialOffer(file, req.body);
+  const result = await SpecialOfferService.createSpecialOffer( req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -44,7 +40,6 @@ const editSpecialOffer = catchAsync(async (req, res, next) => {
   const result = await SpecialOfferService.editSpecialOffer(
     req.params.id,
     req.body,
-    file,
   );
   sendResponse(res, {
     success: true,

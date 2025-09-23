@@ -3,87 +3,96 @@ import prisma from '../../utils/prisma';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 
-const crateSlider = async (payload: Slider) => {
-  const isExistProduct = await prisma.product.findUnique({
-    where: {
-      id: payload.productId,
-    },
+// Create slider
+const createSlider = async (
+  payload: Omit<Slider, 'id' | 'createdAt' | 'updatedAt'>,
+) => {
+  if (!payload.productId) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Product ID is required');
+  }
+
+  // Check if product exists
+  const product = await prisma.product.findUnique({
+    where: { id: payload.productId },
   });
 
-  if (!isExistProduct) {
+  if (!product) {
     throw new AppError(httpStatus.NOT_FOUND, 'Product not found');
   }
 
-  const result = await prisma.slider.create({
-    data: payload,
-  });
-  return result;
-};
-
-const GetAllSlider = async () => {
-  const result = await prisma.slider.findMany({});
-  return result;
-};
-
-const GetSingleSlider = async (id: string) => {
-  const isExist = await prisma.slider.findUnique({
-    where: {
-      id: id,
-    },
+  // Check if slider for this product already exists
+  const existingSlider = await prisma.slider.findUnique({
+    where: { productId: payload.productId },
   });
 
-  if (!isExist) {
+  if (existingSlider) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'Slider for this product already exists',
+    );
+  }
+
+  // Create slider
+  return prisma.slider.create({ data: payload });
+};
+
+// Get all sliders (include product details)
+const getAllSliders = async () => {
+  return prisma.slider.findMany({
+    include: { product: true },
+  });
+};
+
+// Get single slider by id
+const getSingleSlider = async (id: string) => {
+  if (!id) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Slider ID is required');
+  }
+
+  const slider = await prisma.slider.findUnique({
+    where: { id },
+    include: { product: true },
+  });
+
+  if (!slider) {
     throw new AppError(httpStatus.NOT_FOUND, 'Slider not found');
   }
 
-  return isExist;
+  return slider;
 };
 
+// Update slider
 const updateSlider = async (id: string, payload: Partial<Slider>) => {
-  const isExist = await prisma.slider.findUnique({
-    where: {
-      id: id,
-    },
-  });
+  if (!id) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Slider ID is required');
+  }
 
-  if (!isExist) {
+  const slider = await prisma.slider.findUnique({ where: { id } });
+  if (!slider) {
     throw new AppError(httpStatus.NOT_FOUND, 'Slider not found');
   }
 
-  const result = await prisma.slider.update({
-    where: {
-      id: id,
-    },
-    data: payload,
-  });
-
-  return result;
+  return prisma.slider.update({ where: { id }, data: payload });
 };
 
-const DeleteSlider = async (id: string) => {
-  const isExist = await prisma.slider.findUnique({
-    where: {
-      id: id,
-    },
-  });
+// Delete slider
+const deleteSlider = async (id: string) => {
+  if (!id) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Slider ID is required');
+  }
 
-  if (!isExist) {
+  const slider = await prisma.slider.findUnique({ where: { id } });
+  if (!slider) {
     throw new AppError(httpStatus.NOT_FOUND, 'Slider not found');
   }
 
-  const result = await prisma.slider.delete({
-    where: {
-      id: id,
-    },
-  });
-
-  return result;
+  return prisma.slider.delete({ where: { id } });
 };
 
 export const SliderService = {
-  crateSlider,
-  GetAllSlider,
-  GetSingleSlider,
+  createSlider,
+  getAllSliders,
+  getSingleSlider,
   updateSlider,
-  DeleteSlider,
+  deleteSlider,
 };

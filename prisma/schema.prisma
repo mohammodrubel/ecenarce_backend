@@ -116,7 +116,6 @@ model SpecialOffer {
   title       String
   description String?
   productId   String   @unique
-  image       String
   validFrom   DateTime
   validUntil  DateTime?
   isActive    Boolean  @default(true)
