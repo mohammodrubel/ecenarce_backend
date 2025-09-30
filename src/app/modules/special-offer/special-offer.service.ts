@@ -110,6 +110,7 @@ const getAllSpecialOffers = async () => {
           id: true,
           name: true,
           images: true,
+          price:true
         },
       },
     },
