@@ -4,7 +4,9 @@ import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
 import prisma from '../../utils/prisma';
 import { sendImageCloudinary } from '../../utils/sendImageToCloudinary';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
+import { productSearchFields } from './productContains';
+
 
 
 export const createProduct = async (
@@ -69,19 +71,47 @@ const getProduct = async (id: string) => {
   return reuslt
 };
 
-const getAllProducts = async () => {
+const getAllProducts = async (query: any) => {
+  const { searchTerm, ...filterData } = query;
+
+  const andConditions: Prisma.ProductWhereInput[] = [];
+
+  // SearchTerm condition
+  if (searchTerm) {
+    andConditions.push({
+      OR: productSearchFields.map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: 'insensitive',
+        },
+      })),
+    });
+  }
+
+  // Exact match filters
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: filterData[key],
+        },
+      })),
+    });
+  }
+
+  const whereCondition: Prisma.ProductWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
   const result = await prisma.product.findMany({
-    where: {
-      isDeleted: false,
-    },
+    where: whereCondition,
     include: {
-      category: true, // include related category
-      brand: true, // include related brand
+      category: true,
+      brand: true,
     },
   });
+
   return result;
 };
-
 
 const updateProduct = async (id: string, data: any) => {
   // Update product by id in database

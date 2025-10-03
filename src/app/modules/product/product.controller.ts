@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { ProductService } from './product.service';
+import pick from '../../utils/PickFunction';
 
 // Create a new product
 const createProduct = catchAsync(async (req, res) => {
@@ -29,8 +30,9 @@ const getProduct = catchAsync(async (req, res) => {
 });
 
 // Get all products
-const getAllProducts = catchAsync(async (_req, res) => {
-  const result = await ProductService.getAllProducts();
+const getAllProducts = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['name', 'subcategory', 'searchTerm']);
+  const result = await ProductService.getAllProducts(filter);
 
   sendResponse(res, {
     success: true,
