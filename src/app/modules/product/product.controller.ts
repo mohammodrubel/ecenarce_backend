@@ -3,6 +3,7 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { ProductService } from './product.service';
 import pick from '../../utils/PickFunction';
+import { productSearchFields } from './productContains';
 
 // Create a new product
 const createProduct = catchAsync(async (req, res) => {
@@ -25,23 +26,24 @@ const getProduct = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Product fetched successfully',
-    data: result,
+ data:result
   });
 });
 
 // Get all products
 const getAllProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'subcategory', 'searchTerm']);
-  const result = await ProductService.getAllProducts(filter);
+  const filter = pick(req.query, productSearchFields);
+  const options = pick(req.query, ['limit', 'page', 'sort', 'order']);
+  const result = await ProductService.getAllProducts(filter, options);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: 'All products fetched successfully',
-    data: result,
+    meta: result.meta, // Use the meta from service result
+    data: result.data,
   });
 });
-
 // Update a product by ID
 const updateProduct = catchAsync(async (req, res) => {
   const result = await ProductService.updateProduct(req.params.id, req.body);

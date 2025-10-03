@@ -6,8 +6,8 @@ import prisma from '../../utils/prisma';
 import { sendImageCloudinary } from '../../utils/sendImageToCloudinary';
 import { Prisma, Product } from '@prisma/client';
 import { productSearchFields } from './productContains';
-
-
+import calculatePagination from '../../utils/pagination';
+import { ApiResponse } from './product.interface';
 
 export const createProduct = async (
   data: Product,
@@ -59,19 +59,17 @@ export const createProduct = async (
   return result;
 };
 
-
 const getProduct = async (id: string) => {
-  const reuslt = await prisma.product.findUnique(
-    {
-      where: {
-        id: id
-      }
-    }
-  )
-  return reuslt
+  const reuslt = await prisma.product.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  return reuslt;
 };
 
-const getAllProducts = async (query: any) => {
+const getAllProducts = async (query: any, options: any) => {
+  const { limit, page, order, sort } = calculatePagination(options);
   const { searchTerm, ...filterData } = query;
 
   const andConditions: Prisma.ProductWhereInput[] = [];
@@ -104,13 +102,31 @@ const getAllProducts = async (query: any) => {
 
   const result = await prisma.product.findMany({
     where: whereCondition,
+    skip: (Number(page) - 1) * Number(limit),
+    take: Number(limit),
+    orderBy:
+      options.sort && options.order
+        ? {
+            [options.order]: sort || 'createdAt',
+          }
+        : { createdAt: 'desc' },
     include: {
       category: true,
       brand: true,
     },
   });
-
-  return result;
+  const total = await prisma.product.count({
+    where: whereCondition,
+  });
+console.log(total) // i got vlaue 
+ return {
+   meta: {
+     page: Number(page),
+     limit: Number(limit),
+     total, // i dindet get vlue
+   },
+   data: result,
+ };
 };
 
 const updateProduct = async (id: string, data: any) => {
@@ -119,19 +135,17 @@ const updateProduct = async (id: string, data: any) => {
 };
 
 const deleteProduct = async (id: string) => {
-    const isExistProduct = await prisma.product.update(
-     {
-      where:{
-        id:id 
-      },
-      data:{
-        isDeleted:true
-      }
-     }
-    )
-    if(!isExistProduct){
-      throw new AppError(httpStatus.NOT_FOUND,'this product is not found')
-    }
+  const isExistProduct = await prisma.product.update({
+    where: {
+      id: id,
+    },
+    data: {
+      isDeleted: true,
+    },
+  });
+  if (!isExistProduct) {
+    throw new AppError(httpStatus.NOT_FOUND, 'this product is not found');
+  }
 };
 
 export const ProductService = {
