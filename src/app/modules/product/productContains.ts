@@ -1,1 +1,7 @@
-export const productSearchFields  =  ['name', 'description', 'subcategory'];
+export const productSearchFields = [
+  'name',
+  'description',
+  'subcategory',
+  'minPrice',
+  'maxPrice',
+];
