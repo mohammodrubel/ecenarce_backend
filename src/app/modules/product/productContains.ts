@@ -4,4 +4,6 @@ export const productSearchFields = [
   'subcategory',
   'minPrice',
   'maxPrice',
+  'brandId',
+  'categoryId',
 ];

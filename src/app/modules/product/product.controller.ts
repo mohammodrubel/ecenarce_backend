@@ -33,7 +33,12 @@ const getProduct = catchAsync(async (req, res) => {
 // Get all products
 const getAllProducts = catchAsync(async (req, res) => {
   const filter = pick(req.query, productSearchFields);
-  const options = pick(req.query, ['limit', 'page', 'sort', 'order']);
+  const options = pick(req.query, [
+    'limit',
+    'page',
+    'sort',
+    'order',
+  ]);
   const result = await ProductService.getAllProducts(filter, options);
 
   sendResponse(res, {
